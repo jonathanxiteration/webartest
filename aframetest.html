@@ -3,11 +3,42 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <title>A-Frame Debug</title>
+
+  <script>
+    // If you see this, the page itself is executing JS.
+    window.addEventListener('load', () => {
+      document.getElementById('status').textContent = "Page JS running…";
+    });
+  </script>
+
+  <script src="https://unpkg.com/aframe@1.4.2/dist/aframe.min.js"></script>
+
+  <script>
+    // If you see this update, A-Frame loaded.
+    window.addEventListener('load', () => {
+      if (window.AFRAME) {
+        document.getElementById('status').textContent = "A-Frame loaded ✅";
+      } else {
+        document.getElementById('status').textContent = "A-Frame NOT loaded ❌";
+      }
+    });
+  </script>
+
+  <style>
+    #status {
+      position: fixed; top: 10px; left: 10px; right: 10px;
+      padding: 10px; background: rgba(0,0,0,0.75); color: #fff;
+      z-index: 9999; font: 16px/1.4 -apple-system, system-ui, sans-serif;
+    }
+  </style>
 </head>
+
 <body style="margin:0">
+  <div id="status">Loading…</div>
+
   <a-scene>
-    <a-box position="0 1 -3"></a-box>
+    <a-box position="0 1.5 -3"></a-box>
     <a-sky></a-sky>
     <a-entity camera position="0 1.6 0"></a-entity>
   </a-scene>
