@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WebAR Debug Marker Test</title>
+
+  <script src="https://unpkg.com/aframe@1.4.2/dist/aframe.min.js"></script>
+  <script src="https://unpkg.com/ar.js@3.4.5/aframe/build/aframe-ar.min.js"></script>
+
+  <style>
+    html, body { margin:0; width:100%; height:100%; overflow:hidden; background:#000; }
+    #start {
+      position: fixed; inset: 0;
+      display:flex; align-items:center; justify-content:center;
+      background: rgba(0,0,0,0.85); color:#fff; z-index:9999;
+      font: 18px/1.4 -apple-system, system-ui, sans-serif;
+      text-align:center; padding:24px;
+    }
+    button { font-size:18px; padding:14px 20px; margin-top:12px; }
+    #hud {
+      position: fixed; top: 10px; left: 10px; right: 10px;
+      padding: 10px; background: rgba(0,0,0,0.7); color: #fff;
+      z-index: 9998; font: 14px/1.4 -apple-system, system-ui, sans-serif;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="start">
+    <div>
+      <div>Tap to start AR<br>(Safari will ask for camera permission)</div>
+      <button id="btn">Start AR</button>
+      <div style="margin-top:12px; font-size:14px; opacity:0.8;">
+        After starting, point at a Hiro marker.
+      </div>
+    </div>
+  </div>
+
+  <div id="hud">Status: waiting to start…</div>
+
+  <a-scene
+    id="scene"
+    style="display:none; position: fixed; inset: 0;"
+    vr-mode-ui="enabled:false"
+    renderer="antialias:true; alpha:true"
+    arjs="sourceType: webcam; facingMode: environment; debugUIEnabled:false;"
+  >
+    <a-marker preset="hiro" id="m">
+      <a-box position="0 0.5 0" depth="1" height="1" width="1" color="tomato"></a-box>
+    </a-marker>
+
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <script>
+    const hud = document.getElementById('hud');
+
+    function setHud(msg) { hud.textContent = "Status: " + msg; }
+
+    document.getElementById('btn').addEventListener('click', () => {
+      document.getElementById('start').style.display = 'none';
+      document.getElementById('scene').style.display = 'block';
+      setHud("scene shown; requesting camera…");
+
+      // Give AR.js a moment to create the video element
+      setTimeout(() => {
+        const video = document.querySelector('video');
+        if (!video) {
+          setHud("NO <video> element found (camera not started). Check Safari camera permissions.");
+          return;
+        }
+
+        // iOS likes these attributes
+        video.setAttribute('playsinline', '');
+        video.setAttribute('webkit-playsinline', '');
+        video.muted = true;
+
+        // Try to force playback (should be allowed after user click)
+        const p = video.play();
+        if (p && typeof p.then === 'function') {
+          p.then(() => setHud("video found and playing ✅"))
+           .catch(err => setHud("video found but play() failed ❌: " + (err?.name || err)));
+        } else {
+          setHud("video found (playback state unknown).");
+        }
+
+        // Extra: show readiness after a moment
+        setTimeout(() => {
+          setHud(`video readyState=${video.readyState} (0–4). If 0/1, camera stream isn’t flowing.`);
+        }, 1200);
+
+      }, 600);
+    });
+
+    // Marker detection feedback
+    const marker = document.getElementById('m');
+    marker.addEventListener('markerFound', () => setHud("Hiro marker FOUND ✅ (cube should appear)"));
+    marker.addEventListener('markerLost', () => setHud("Hiro marker lost…"));
+  </script>
+</body>
+</html>
