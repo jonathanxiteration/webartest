@@ -55,8 +55,8 @@
     <!-- IMPORTANT: this makes the 3D background transparent -->
     <a-entity environment="preset: none" visible="false"></a-entity>
 
-    <a-marker preset="hiro" id="m">
-      <a-box position="0 1 0" depth="2" height="2" width="2" color="tomato"></a-box>
+    <a-marker preset="hiro" id="m" smooth="true" smoothCount="5" smoothTolerance="0.01" smoothThreshold="2">
+      <a-box position="0 1 0" scale="3 3 3" color="tomato"></a-box>
     </a-marker>
 
     <a-entity camera></a-entity>
