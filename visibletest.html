@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A-Frame Visible Test</title>
+  <script src="https://unpkg.com/aframe@1.4.2/dist/aframe.min.js"></script>
+  <style>
+    html, body { margin: 0; width: 100%; height: 100%; background: red; overflow: hidden; }
+    a-scene { position: fixed !important; top: 0; left: 0; right: 0; bottom: 0; }
+    #status {
+      position: fixed; top: 10px; left: 10px; right: 10px;
+      padding: 10px; background: rgba(0,0,0,0.75); color: #fff;
+      z-index: 9999; font: 16px/1.4 -apple-system, system-ui, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div id="status">If you see RED background, HTML/CSS are visible.</div>
+
+  <a-scene renderer="antialias: true; alpha: false;" embedded>
+    <a-sky color="#88c"></a-sky>
+    <a-box position="0 1.5 -2" depth="1" height="1" width="1"></a-box>
+    <a-entity camera position="0 1.6 0"></a-entity>
+  </a-scene>
+
+  <script>
+    // Confirm the scene actually starts
+    const scene = document.querySelector('a-scene');
+    scene.addEventListener('loaded', () => {
+      document.getElementById('status').textContent = "Scene loaded ✅ (you should see a sky + box)";
+    });
+  </script>
+</body>
+</html>
